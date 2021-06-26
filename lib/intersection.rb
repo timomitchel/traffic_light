@@ -45,14 +45,17 @@ class Intersection
     current_greens = find_lights('green')
     turn_all_red
     if current_greens.nil?
-      increment_tick(50)
-      reset_tick(0)
+      emergency_tick_count
       switch_light_state(@pairs.keys.sample)
     else
-      increment_tick(50)
-      reset_tick(0)
+      emergency_tick_count
       switch_light_state(current_greens)
     end
+  end
+
+  def emergency_tick_count
+    increment_tick(50)
+    reset_tick(0)
   end
 
   def switch_check
