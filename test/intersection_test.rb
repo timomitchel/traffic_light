@@ -1,5 +1,6 @@
 require 'minitest/pride'
 require 'minitest/autorun'
+require 'mocha/minitest'
 require './lib/light'
 require './lib/intersection'
 
@@ -191,15 +192,40 @@ class IntersectionTest < Minitest::Test
     assert_equal :ns, @intersection.find_lights('red')
   end
 
-  def test_emergency_shutdown
+  def test_emergency_shutdown_with_lights_green
     @intersection.switch_light_state(:ns)
     @intersection.emergency_shutdown
+
     @intersection.pairs[:ns].each do |light|
       assert_equal light.color, "green"
    end
-
      @intersection.pairs[:ew].each do |light|
        assert_equal light.color, "red"
+    end
+  end
+
+  def test_emergency_shutdown_with_lights_yellow
+    @intersection.increment_tick(30)
+    @intersection.switch_light_state(:ns)
+
+    Array.any_instance.stubs(:sample).returns(:ew)
+    @intersection.emergency_shutdown
+    @intersection.pairs[:ew].each do |light|
+        assert_equal light.color, "green"
+     end
+     @intersection.pairs[:ns].each do |light|
+        assert_equal light.color, "red"
+    end
+  end
+
+  def test_emergency_shutdown_with_lights_red
+    Array.any_instance.stubs(:sample).returns(:ew)
+    @intersection.emergency_shutdown
+    @intersection.pairs[:ew].each do |light|
+        assert_equal light.color, "green"
+     end
+     @intersection.pairs[:ns].each do |light|
+        assert_equal light.color, "red"
     end
   end
 end
