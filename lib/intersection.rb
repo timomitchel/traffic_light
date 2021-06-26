@@ -44,11 +44,10 @@ class Intersection
   def emergency_shutdown
     current_greens = find_lights('green')
     turn_all_red
+    emergency_tick_count
     if current_greens.nil?
-      emergency_tick_count
       switch_light_state(@pairs.keys.sample)
     else
-      emergency_tick_count
       switch_light_state(current_greens)
     end
   end
